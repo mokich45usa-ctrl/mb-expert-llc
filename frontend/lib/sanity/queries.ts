@@ -77,6 +77,19 @@ type ServicesPageData = {
 };
 
 export async function getHomePage(): Promise<HomePageData | null> {
+  if (typeof window !== "undefined") {
+    try {
+      const response = await fetch("/api/home", { cache: "no-store" });
+      if (!response.ok) {
+        return null;
+      }
+
+      return (await response.json()) as HomePageData;
+    } catch {
+      return null;
+    }
+  }
+
   if (!sanityClient) {
     return null;
   }
@@ -122,6 +135,19 @@ export async function getHomePage(): Promise<HomePageData | null> {
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData | null> {
+  if (typeof window !== "undefined") {
+    try {
+      const response = await fetch("/api/settings", { cache: "no-store" });
+      if (!response.ok) {
+        return null;
+      }
+
+      return (await response.json()) as SiteSettingsData;
+    } catch {
+      return null;
+    }
+  }
+
   if (!sanityClient) {
     return null;
   }
@@ -146,6 +172,19 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
 }
 
 export async function getServicesPage(): Promise<ServicesPageData | null> {
+  if (typeof window !== "undefined") {
+    try {
+      const response = await fetch("/api/services", { cache: "no-store" });
+      if (!response.ok) {
+        return null;
+      }
+
+      return (await response.json()) as ServicesPageData;
+    } catch {
+      return null;
+    }
+  }
+
   if (!sanityClient) {
     return null;
   }
