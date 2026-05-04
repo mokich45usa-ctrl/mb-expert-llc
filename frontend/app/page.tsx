@@ -289,6 +289,23 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="lead-strip">
+        <div className="section-shell">
+          <div className="section-inner lead-strip__inner">
+            <div>
+              <div className="section-kicker">Quick Request</div>
+              <h2>Need a faster reply? Start the estimate form below.</h2>
+            </div>
+            <p>
+              Tell us the vehicle, issue and location once. We will come back with the next step instead of making you repeat the same details.
+            </p>
+            <button type="button" className="button-primary" onClick={() => scrollToSection('contact')}>
+              Open Estimate Form <ArrowRight className="icon-sm" />
+            </button>
+          </div>
+        </div>
+      </section>
+
       <section id="about" className="content-section">
         <div className="section-shell">
           <div className="section-inner split-grid split-grid--about">
@@ -318,9 +335,9 @@ export default function HomePage() {
               </div>
               <div className="section-head__body">
                 <p>{servicesIntro}</p>
-                <button type="button" onClick={() => scrollToSection('contact')} className="button-secondary button-secondary--inline">
+                <Link href="/services" className="button-secondary button-secondary--inline">
                   View Full Services List <ChevronRight className="icon-sm" />
-                </button>
+                </Link>
               </div>
             </div>
 

@@ -381,6 +381,36 @@ button {
   background: var(--bg-soft);
 }
 
+.lead-strip {
+  padding: 0 0 84px;
+  background: #fff;
+}
+
+.lead-strip__inner {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+  padding: 28px;
+  border: 1px solid rgba(11, 15, 18, 0.1);
+  background: linear-gradient(135deg, rgba(34, 184, 200, 0.08), rgba(255, 255, 255, 0.98));
+  box-shadow: var(--shadow-panel);
+}
+
+.lead-strip__inner h2 {
+  margin: 8px 0 0;
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+}
+
+.lead-strip__inner p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
 .split-grid {
   display: grid;
   gap: 32px;
