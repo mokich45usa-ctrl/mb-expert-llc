@@ -142,7 +142,7 @@ export default function HomePage() {
 
   const heroEyebrow = homeData?.heroEyebrow ?? 'Northern Michigan mobile service';
   const heroTitle =
-    homeData?.heroTitle ?? 'Dealer-level diagnostics and locksmith support at your location.';
+    homeData?.heroTitle ?? 'Professional Mobile Mechanic and Locksmith Service';
   const heroSubtitle =
     homeData?.heroSubtitle ??
     'MB Expert LLC brings professional mobile mechanic service to Traverse City and Northern Michigan with clean communication, advanced scan tools, and fast on-site support.';
