@@ -34,3 +34,7 @@ Client project scaffold for the MB Expert LLC website.
 3. wire the frontend to the Sanity dataset
 4. deploy the site and studio
 
+## Connected Sanity project
+
+- Project ID: `3r3gcxe4`
+- Dataset: `production`

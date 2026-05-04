@@ -6,4 +6,4 @@ frontend/.env.local
 sanity/.sanity
 sanity/node_modules
 sanity/.env
-
+sanity/dist

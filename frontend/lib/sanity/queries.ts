@@ -81,8 +81,9 @@ export async function getHomePage(): Promise<HomePageData | null> {
     return null;
   }
 
-  return sanityClient.fetch(
-    `*[_type == "homePage"][0]{
+  try {
+    return await sanityClient.fetch(
+      `*[_type == "homePage"][0]{
       title,
       heroEyebrow,
       heroTitle,
@@ -114,7 +115,10 @@ export async function getHomePage(): Promise<HomePageData | null> {
       "contactBackgroundImage": contactBackgroundImage.asset->{url},
       contactCta{label, href}
     }`
-  );
+    );
+  } catch {
+    return null;
+  }
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData | null> {
@@ -122,8 +126,9 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
     return null;
   }
 
-  return sanityClient.fetch(
-    `*[_type == "siteSettings"][0]{
+  try {
+    return await sanityClient.fetch(
+      `*[_type == "siteSettings"][0]{
       businessName,
       tagline,
       phone,
@@ -134,7 +139,10 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
       primaryCtaLabel,
       primaryCtaHref
     }`
-  );
+    );
+  } catch {
+    return null;
+  }
 }
 
 export async function getServicesPage(): Promise<ServicesPageData | null> {
@@ -142,8 +150,9 @@ export async function getServicesPage(): Promise<ServicesPageData | null> {
     return null;
   }
 
-  return sanityClient.fetch(
-    `*[_type == "servicesPage"][0]{
+  try {
+    return await sanityClient.fetch(
+      `*[_type == "servicesPage"][0]{
       title,
       intro,
       categories[]{
@@ -156,5 +165,8 @@ export async function getServicesPage(): Promise<ServicesPageData | null> {
         }
       }
     }`
-  );
+    );
+  } catch {
+    return null;
+  }
 }
