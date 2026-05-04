@@ -169,13 +169,15 @@ export default function HomePage() {
   const contactBackgroundImage =
     homeData?.contactBackgroundImage?.url ??
     'https://mbexpertllc.com/wp-content/uploads/2026/03/11887-e1772742262479-957x1024.jpg';
-  const featuredServices = services.map((fallback, index) => {
-    const service = homeData?.featuredServices?.[index];
+  const featuredServicesSource = homeData?.featuredServices?.length ? homeData.featuredServices : services;
+  const featuredServices = featuredServicesSource.map((service, index) => {
+    const fallback = services[index % services.length];
+    const image = 'imageUrl' in service ? service.imageUrl : fallback.image;
     return {
       icon: fallback.icon,
       title: service?.title ?? fallback.title,
       description: service?.description ?? fallback.description,
-      image: service?.imageUrl ?? fallback.image,
+      image: image ?? fallback.image,
       alt: fallback.alt,
     };
   });
@@ -285,23 +287,6 @@ export default function HomePage() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="lead-strip">
-        <div className="section-shell">
-          <div className="section-inner lead-strip__inner">
-            <div>
-              <div className="section-kicker">Quick Request</div>
-              <h2>Need a faster reply? Start the estimate form below.</h2>
-            </div>
-            <p>
-              Tell us the vehicle, issue and location once. We will come back with the next step instead of making you repeat the same details.
-            </p>
-            <button type="button" className="button-primary" onClick={() => scrollToSection('contact')}>
-              Open Estimate Form <ArrowRight className="icon-sm" />
-            </button>
           </div>
         </div>
       </section>

@@ -23,6 +23,7 @@ import { getServicesPage, getSiteSettings } from '../../lib/sanity/queries';
 type ServiceItem = {
   title: string;
   description: string;
+  ctaLabel?: string;
 };
 
 type ServiceGroup = {
@@ -254,21 +255,35 @@ export default function ServicesPage() {
   const servicesHeroIntro =
     servicesData?.intro ??
     'This page is the deeper service library for visitors who want the complete list instead of the homepage summary. It is still built for clarity and conversion.';
-  const displayGroups = groups.map((fallbackGroup, index) => {
-    const category = servicesData?.categories?.[index];
-    return {
-      icon: fallbackGroup.icon,
-      title: category?.title ?? fallbackGroup.title,
-      intro: category?.description ?? fallbackGroup.intro,
-      items: fallbackGroup.items.map((fallbackItem, itemIndex) => {
-        const service = category?.services?.[itemIndex];
+  const displayGroups = servicesData?.categories?.length
+    ? servicesData.categories.map((category, index) => {
+        const fallbackGroup = groups[index % groups.length];
+        const itemsSource = category.services?.length ? category.services : fallbackGroup.items;
+
         return {
-          title: service?.title ?? fallbackItem.title,
-          description: service?.description ?? fallbackItem.description,
+          icon: fallbackGroup.icon,
+          title: category.title ?? fallbackGroup.title,
+          intro: category.description ?? fallbackGroup.intro,
+          items: itemsSource.map((service, itemIndex) => {
+            const fallbackItem = fallbackGroup.items[itemIndex % fallbackGroup.items.length];
+            return {
+              title: service?.title ?? fallbackItem.title,
+              description: service?.description ?? fallbackItem.description,
+              ctaLabel: service?.ctaLabel ?? 'Order Service',
+            };
+          }),
         };
-      }),
-    };
-  });
+      })
+    : groups.map((fallbackGroup) => ({
+        icon: fallbackGroup.icon,
+        title: fallbackGroup.title,
+        intro: fallbackGroup.intro,
+        items: fallbackGroup.items.map((item) => ({
+          title: item.title,
+          description: item.description,
+          ctaLabel: 'Order Service',
+        })),
+      }));
 
   return (
     <main className="site-root">
@@ -343,7 +358,7 @@ export default function ServicesPage() {
                           <h4>{item.title}</h4>
                           <p>{item.description}</p>
                           <button type="button" onClick={() => (window.location.href = '/#contact')} className="button-secondary button-secondary--small">
-                            Order Service <ChevronRight className="icon-sm" />
+                            {item.ctaLabel ?? 'Order Service'} <ChevronRight className="icon-sm" />
                           </button>
                         </article>
                       ))}
