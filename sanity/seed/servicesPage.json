@@ -1,0 +1,164 @@
+{
+  "_id": "servicesPage",
+  "_type": "servicesPage",
+  "title": "MB Expert LLC Services",
+  "intro": "Complete diagnostics, mobile locksmith work, electrical programming, pre-purchase audits, maintenance support, and brake systems service for modern vehicles.",
+  "categories": [
+    {
+      "title": "In-Depth Computer Diagnostics",
+      "description": "Electronic and module-level diagnosis for modern vehicles that need more than a basic scan.",
+      "services": [
+        {
+          "title": "Full System Scan",
+          "description": "A complete vehicle-wide scan to quickly uncover stored faults, communication issues, and hidden module problems.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Safety Systems Diagnostics (Airbag/SRS)",
+          "description": "Targeted safety-system diagnosis for airbag, SRS, and warning lamp concerns that need accurate electronic tracing.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Precision Troubleshooting",
+          "description": "Step-by-step fault isolation for hard-to-find electrical and drivability issues that do not show up in a basic scan.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Engine Performance Diagnostics",
+          "description": "Focused analysis of engine behavior, misfires, throttle response, and sensor output to find the real cause.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Emissions & EVAP Services",
+          "description": "Diagnosis and repair support for emissions faults, EVAP leaks, and related compliance issues.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    },
+    {
+      "title": "Auto Electrical & Programming (Flashing)",
+      "description": "Electrical repair and software-level programming for drivability, starting and charging issues.",
+      "services": [
+        {
+          "title": "Control Module Programming (ECU)",
+          "description": "Programming and flashing support for control modules when software updates or recalibration are needed.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Complex Electrical Repair",
+          "description": "Troubleshooting and repair for wiring faults, relays, power distribution, and intermittent electrical failures.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Starting & Charging Systems",
+          "description": "Diagnosis of battery, alternator, starter, and charging circuit problems that keep the vehicle from starting reliably.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Hybrids & Electric Vehicles (EV)",
+          "description": "Support for modern electrified platforms that require careful technical work and specialized diagnostic workflows.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    },
+    {
+      "title": "Mobile Locksmith Services",
+      "description": "On-site access and key services when the vehicle is locked, the key is missing, or the immobilizer needs attention.",
+      "services": [
+        {
+          "title": "Emergency Car Lockout",
+          "description": "Fast on-site vehicle entry help for lockout situations without unnecessary towing or dealership delays.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Key Cutting & Programming",
+          "description": "Key cutting, transponder setup, and programming support for replacement, spare, or lost keys.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Immobilizer Reset",
+          "description": "Immobilizer support for cases where the vehicle recognizes the key improperly or will not authorize start-up.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    },
+    {
+      "title": "Pre-Purchase Electronic & Technical Audit",
+      "description": "A technical review that helps buyers understand the condition of the electronics before purchase.",
+      "services": [
+        {
+          "title": "Comprehensive Module Scan",
+          "description": "A buyer-focused scan that checks for hidden faults, stored codes, and module communication issues before you purchase.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Electrical & Engine Integrity Check",
+          "description": "A deeper technical check that looks at engine behavior, electrical health, and signs of expensive underlying issues.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    },
+    {
+      "title": "Additional Maintenance & Sensor Services",
+      "description": "Support for common maintenance items and sensor-related failures that affect reliability.",
+      "services": [
+        {
+          "title": "Cooling System Maintenance",
+          "description": "Maintenance and repair support for cooling components that protect engine performance and temperature control.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "TPMS Sensor Services",
+          "description": "Tire pressure monitoring sensor support for warnings, sensor replacement, and system relearning.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Wearable Parts Replacement",
+          "description": "Replacement of common wear items that affect safe operation, drivability, and long-term reliability.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    },
+    {
+      "title": "Brake Systems Services",
+      "description": "Brake-related diagnostics and repair for safety-critical stopping performance.",
+      "services": [
+        {
+          "title": "Brake System Diagnostics",
+          "description": "Diagnostic work to isolate noises, pull, vibration, warning lights, or inconsistent brake pedal behavior.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Disc & Drum Brake Service",
+          "description": "Service and repair for disc and drum brake components, including wear-related issues and braking feel.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Hydraulic System Repair",
+          "description": "Diagnosis and repair of hydraulic braking problems involving calipers, lines, fluid pressure, or pedal feel.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Wheel Hub & Bearing Replacement",
+          "description": "Replacement of worn hubs and bearings that create noise, looseness, or unsafe drivability.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "ABS (Antilock Brake System) Diagnostics & Repair",
+          "description": "ABS fault diagnosis and repair for warning lights, wheel speed sensor faults, and braking stability issues.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Parking Brake Service",
+          "description": "Parking brake adjustment and service for mechanical or electronic systems that need proper hold and release.",
+          "ctaLabel": "Order Service"
+        },
+        {
+          "title": "Brake Fluid Flush & Bleeding",
+          "description": "Brake fluid replacement and bleeding to maintain hydraulic performance and pedal consistency.",
+          "ctaLabel": "Order Service"
+        }
+      ]
+    }
+  ]
+}

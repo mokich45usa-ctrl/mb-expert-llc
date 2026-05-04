@@ -1,0 +1,75 @@
+{
+  "_id": "homePage",
+  "_type": "homePage",
+  "title": "MB Expert LLC Homepage",
+  "heroEyebrow": "Northern Michigan mobile service",
+  "heroTitle": "Dealer-level diagnostics and locksmith support at your location.",
+  "heroSubtitle": "MB Expert LLC brings professional mobile mechanic service to Traverse City and Northern Michigan with clean communication, advanced scan tools, and fast on-site support.",
+  "heroPrimaryCta": {
+    "label": "Request Service",
+    "href": "#contact"
+  },
+  "heroSecondaryCta": {
+    "label": "View Services",
+    "href": "#services"
+  },
+  "aboutEyebrow": "About Us",
+  "aboutTitle": "Professional mobile diagnostics and repair, built around your schedule.",
+  "aboutBody": "MB Expert LLC is a professional Mobile Mechanic service based in Traverse City, serving vehicle owners throughout Northern Michigan. We understand how valuable your time is, which is why we bring modern auto service directly to you - at your home, your workplace parking lot, or right at the location of an unexpected breakdown. Modern vehicles are complex systems that require precision, deep knowledge, and the right tools. Instead of wasting time driving to a dealership or waiting for a tow truck, you get highly qualified assistance wherever it is convenient for you. We arrive fully equipped with advanced, dealer-level diagnostic tools and software, allowing us to solve technical problems of any complexity right on the spot.",
+  "aboutCta": {
+    "label": "Request Service",
+    "href": "#contact"
+  },
+  "featuredServices": [
+    {
+      "title": "Comprehensive System Scanning",
+      "description": "Deep scans across vehicle modules to quickly identify active and stored faults."
+    },
+    {
+      "title": "DTC Analysis & Interpretation",
+      "description": "Clear decoding of trouble codes so you know what the vehicle is actually reporting."
+    },
+    {
+      "title": "Live Data Stream Monitoring",
+      "description": "Real-time sensor and system monitoring to catch intermittent issues in motion."
+    },
+    {
+      "title": "Service Light Reset",
+      "description": "Reset maintenance alerts and service indicators after completed repairs or service."
+    },
+    {
+      "title": "Electronic Health Reports",
+      "description": "Simple, readable reports summarizing fault states, findings, and next steps."
+    },
+    {
+      "title": "Advanced Performance Testing",
+      "description": "Targeted performance checks to validate repair results and expose hidden issues."
+    }
+  ],
+  "processEyebrow": "How It Works",
+  "processTitle": "Three steps, no friction.",
+  "processSteps": [
+    {
+      "stepLabel": "01",
+      "title": "Choose Your Service",
+      "description": "Tell us what is going on with the vehicle and we match the right mobile mechanic or locksmith service to the issue."
+    },
+    {
+      "stepLabel": "02",
+      "title": "Make an APPOINTMENT",
+      "description": "We set a convenient time and location, whether that is your home, workplace parking lot, or the roadside."
+    },
+    {
+      "stepLabel": "03",
+      "title": "We'll take YOUR CAR for repair",
+      "description": "We arrive equipped, handle the repair or diagnostic work on site, and move the job forward without dealership delays."
+    }
+  ],
+  "contactEyebrow": "Contact and Estimate",
+  "contactTitle": "Send the issue once. Get the next step faster.",
+  "contactBody": "This form is set up to collect the right information quickly so MB Expert LLC can respond with a clear next step.",
+  "contactCta": {
+    "label": "Send request",
+    "href": "#contact"
+  }
+}

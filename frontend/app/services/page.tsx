@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Activity,
   ArrowRight,
@@ -18,6 +18,7 @@ import {
   Wrench,
   X,
 } from 'lucide-react';
+import { getServicesPage, getSiteSettings } from '../../lib/sanity/queries';
 
 type ServiceItem = {
   title: string;
@@ -172,7 +173,15 @@ const groups: ServiceGroup[] = [
   },
 ];
 
-function Header() {
+function Header({
+  businessName = 'MB Expert LLC',
+  tagline = 'Mobile Mechanic and Locksmith',
+  phone = '2313926204',
+}: {
+  businessName?: string;
+  tagline?: string;
+  phone?: string;
+}) {
   const [open, setOpen] = useState(false);
   const goHome = () => {
     window.location.pathname = '/';
@@ -186,14 +195,14 @@ function Header() {
               <img src="/assets/mb-expert-logo.png" alt="MB Expert LLC logo" className="brand-logo" />
             </span>
             <span className="brand-copy">
-              <span className="brand-title">MB Expert LLC</span>
-              <span className="brand-subtitle">Mobile Mechanic and Locksmith</span>
+              <span className="brand-title">{businessName}</span>
+              <span className="brand-subtitle">{tagline}</span>
             </span>
           </button>
           <nav className="site-nav">
             <button type="button" onClick={goHome}>Home</button>
             <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Top</button>
-            <button type="button" onClick={() => (window.location.href = 'tel:2313926204')}>Call Now</button>
+            <button type="button" onClick={() => (window.location.href = `tel:${phone}`)}>Call Now</button>
           </nav>
           <div className="site-header__actions">
             <button type="button" className="button-primary button-primary--header" onClick={goHome}>
@@ -209,7 +218,7 @@ function Header() {
         <div className="site-mobile-menu">
           <button type="button" onClick={goHome}>Home</button>
           <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Top</button>
-          <button type="button" onClick={() => (window.location.href = 'tel:2313926204')}>Call Now</button>
+          <button type="button" onClick={() => (window.location.href = `tel:${phone}`)}>Call Now</button>
         </div>
       ) : null}
     </header>
@@ -217,20 +226,61 @@ function Header() {
 }
 
 export default function ServicesPage() {
+  const [servicesData, setServicesData] = useState<Awaited<ReturnType<typeof getServicesPage>>>(null);
+  const [siteSettings, setSiteSettings] = useState<Awaited<ReturnType<typeof getSiteSettings>>>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    void Promise.all([getServicesPage(), getSiteSettings()]).then(([servicesPage, settings]) => {
+      if (!mounted) {
+        return;
+      }
+
+      setServicesData(servicesPage);
+      setSiteSettings(settings);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const businessName = siteSettings?.businessName ?? 'MB Expert LLC';
+  const tagline = siteSettings?.tagline ?? 'Mobile Mechanic and Locksmith';
+  const phone = (siteSettings?.phone ?? '231-392-6204').replace(/[^0-9+]/g, '');
+  const servicesHeroTitle =
+    servicesData?.title ?? 'Everything MB Expert LLC can help with, organized by category.';
+  const servicesHeroIntro =
+    servicesData?.intro ??
+    'This page is the deeper service library for visitors who want the complete list instead of the homepage summary. It is still built for clarity and conversion.';
+  const displayGroups = groups.map((fallbackGroup, index) => {
+    const category = servicesData?.categories?.[index];
+    return {
+      icon: fallbackGroup.icon,
+      title: category?.title ?? fallbackGroup.title,
+      intro: category?.description ?? fallbackGroup.intro,
+      items: fallbackGroup.items.map((fallbackItem, itemIndex) => {
+        const service = category?.services?.[itemIndex];
+        return {
+          title: service?.title ?? fallbackItem.title,
+          description: service?.description ?? fallbackItem.description,
+        };
+      }),
+    };
+  });
+
   return (
     <main className="site-root">
-      <Header />
+      <Header businessName={businessName} tagline={tagline} phone={phone} />
 
       <section className="services-hero">
         <div className="section-shell">
           <div className="section-inner services-hero__inner">
             <div className="services-hero__copy">
               <div className="section-kicker">Full Services</div>
-              <h1>Everything MB Expert LLC can help with, organized by category.</h1>
-              <p>
-                This page is the deeper service library for visitors who want the complete list instead of the homepage summary.
-                It is still built for clarity and conversion.
-              </p>
+              <h1>{servicesHeroTitle}</h1>
+              <p>{servicesHeroIntro}</p>
               <div className="hero-actions hero-actions--services">
                 <button type="button" className="button-primary" onClick={() => (window.location.pathname = '/')}>
                   Back to Home
@@ -276,7 +326,7 @@ export default function ServicesPage() {
             </div>
 
             <div className="categories-grid">
-              {groups.map((group) => {
+              {displayGroups.map((group) => {
                 const Icon = group.icon;
                 return (
                   <section key={group.title} className="category-card">

@@ -1,0 +1,12 @@
+{
+  "_id": "siteSettings",
+  "_type": "siteSettings",
+  "businessName": "MB Expert LLC",
+  "tagline": "Mobile mechanic and locksmith support for Traverse City and Northern Michigan.",
+  "phone": "231-392-6204",
+  "email": "mbexpertllc@gmail.com",
+  "address": "Traverse City, MI 49686",
+  "serviceArea": "Traverse City and Northern Michigan",
+  "primaryCtaLabel": "Request Service",
+  "primaryCtaHref": "#contact"
+}
