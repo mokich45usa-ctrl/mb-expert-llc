@@ -22,26 +22,32 @@
   },
   "featuredServices": [
     {
+      "_key": "featuredService-1",
       "title": "Comprehensive System Scanning",
       "description": "Deep scans across vehicle modules to quickly identify active and stored faults."
     },
     {
+      "_key": "featuredService-2",
       "title": "DTC Analysis & Interpretation",
       "description": "Clear decoding of trouble codes so you know what the vehicle is actually reporting."
     },
     {
+      "_key": "featuredService-3",
       "title": "Live Data Stream Monitoring",
       "description": "Real-time sensor and system monitoring to catch intermittent issues in motion."
     },
     {
+      "_key": "featuredService-4",
       "title": "Service Light Reset",
       "description": "Reset maintenance alerts and service indicators after completed repairs or service."
     },
     {
+      "_key": "featuredService-5",
       "title": "Electronic Health Reports",
       "description": "Simple, readable reports summarizing fault states, findings, and next steps."
     },
     {
+      "_key": "featuredService-6",
       "title": "Advanced Performance Testing",
       "description": "Targeted performance checks to validate repair results and expose hidden issues."
     }
@@ -50,16 +56,19 @@
   "processTitle": "Three steps, no friction.",
   "processSteps": [
     {
+      "_key": "process-step-1",
       "stepLabel": "01",
       "title": "Choose Your Service",
       "description": "Tell us what is going on with the vehicle and we match the right mobile mechanic or locksmith service to the issue."
     },
     {
+      "_key": "process-step-2",
       "stepLabel": "02",
       "title": "Make an APPOINTMENT",
       "description": "We set a convenient time and location, whether that is your home, workplace parking lot, or the roadside."
     },
     {
+      "_key": "process-step-3",
       "stepLabel": "03",
       "title": "We'll take YOUR CAR for repair",
       "description": "We arrive equipped, handle the repair or diagnostic work on site, and move the job forward without dealership delays."
