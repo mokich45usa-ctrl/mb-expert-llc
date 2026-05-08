@@ -16,6 +16,10 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: 'MB Expert LLC',
   description: 'Mobile mechanic and diagnostics website for MB Expert LLC.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mbexpertllc.com'),
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({
