@@ -730,10 +730,33 @@ button {
   grid-column: 1 / -1;
 }
 
+.form-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .form-note {
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.form-note--success {
+  color: #0f7a43;
+}
+
+.form-note--error {
+  color: #b42318;
+}
+
+.button-primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
+  transform: none;
 }
 
 .site-footer {

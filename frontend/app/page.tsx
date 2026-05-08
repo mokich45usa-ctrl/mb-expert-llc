@@ -105,6 +105,8 @@ export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [homeData, setHomeData] = useState<Awaited<ReturnType<typeof getHomePage>>>(null);
   const [siteSettings, setSiteSettings] = useState<Awaited<ReturnType<typeof getSiteSettings>>>(null);
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [formMessage, setFormMessage] = useState('');
   const [formData, setFormData] = useState({
     zipCode: '',
     year: '',
@@ -206,8 +208,43 @@ export default function HomePage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormStatus('sending');
+    setFormMessage('');
+
+    const payload = Object.fromEntries(new FormData(e.currentTarget).entries());
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = (await response.json().catch(() => null)) as { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.error ?? 'Request failed. Please try again.');
+      }
+
+      setFormData({
+        zipCode: '',
+        year: '',
+        make: '',
+        model: '',
+        phone: '',
+        email: '',
+        message: '',
+      });
+      setFormStatus('success');
+      setFormMessage('Request sent. MB Expert LLC will reply by email soon.');
+    } catch (error) {
+      setFormStatus('error');
+      setFormMessage(error instanceof Error ? error.message : 'Could not send the request right now.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -440,6 +477,14 @@ export default function HomePage() {
               <div className="contact-form-card">
                 <h3>Request service</h3>
                 <form onSubmit={handleSubmit} className="contact-form">
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="form-honeypot"
+                  />
                   <div className="contact-form__grid">
                     {[
                       { id: 'zipCode', label: 'ZIP Code', type: 'text', placeholder: '49686' },
@@ -458,7 +503,7 @@ export default function HomePage() {
                           value={formData[field.id as keyof typeof formData]}
                           onChange={handleChange}
                           placeholder={field.placeholder}
-                          required={field.id !== 'email'}
+                          required
                         />
                       </label>
                     ))}
@@ -473,15 +518,16 @@ export default function HomePage() {
                       onChange={handleChange}
                       rows={5}
                       placeholder="Include warning lights, no-start condition, key issue, lockout or any recent repair history."
+                      required
                     />
                   </label>
 
-                  <button type="submit" className="button-primary button-primary--wide">
-                    <Send className="icon-sm" /> Send request
+                  <button type="submit" className="button-primary button-primary--wide" disabled={formStatus === 'sending'}>
+                    <Send className="icon-sm" /> {formStatus === 'sending' ? 'Sending...' : 'Send request'}
                   </button>
 
-                  <p className="form-note">
-                    Current form action is placeholder-only in this template build. For launch, it should be connected to email, CRM or call tracking.
+                  <p className={`form-note form-note--${formStatus}`} aria-live="polite">
+                    {formMessage || 'Messages are sent directly to the MB Expert LLC inbox.'}
                   </p>
                 </form>
               </div>
