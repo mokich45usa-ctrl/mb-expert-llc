@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   Clock3,
@@ -20,6 +20,23 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { getHomePage, getSiteSettings } from '../lib/sanity/queries';
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      render: (
+        container: HTMLElement,
+        parameters: {
+          sitekey: string;
+          callback?: (token: string) => void;
+          'expired-callback'?: () => void;
+          'error-callback'?: () => void;
+        }
+      ) => number;
+      reset: (widgetId?: number) => void;
+    };
+  }
+}
 
 type ServiceCard = {
   icon: typeof ScanLine;
@@ -107,6 +124,10 @@ export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<Awaited<ReturnType<typeof getSiteSettings>>>(null);
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [formMessage, setFormMessage] = useState('');
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
+  const recaptchaWidgetIdRef = useRef<number | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState('');
   const [formData, setFormData] = useState({
     zipCode: '',
     year: '',
@@ -134,9 +155,69 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!recaptchaSiteKey || !recaptchaContainerRef.current) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const renderWidget = () => {
+      if (
+        cancelled ||
+        !window.grecaptcha ||
+        !recaptchaContainerRef.current ||
+        recaptchaWidgetIdRef.current !== null
+      ) {
+        return;
+      }
+
+      recaptchaWidgetIdRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
+        sitekey: recaptchaSiteKey,
+        callback: (token: string) => {
+          setRecaptchaToken(token);
+        },
+        'expired-callback': () => {
+          setRecaptchaToken('');
+        },
+        'error-callback': () => {
+          setRecaptchaToken('');
+        },
+      });
+    };
+
+    if (window.grecaptcha?.render) {
+      renderWidget();
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>('script[data-recaptcha="true"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', renderWidget, { once: true });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.dataset.recaptcha = 'true';
+    script.onload = renderWidget;
+    document.head.appendChild(script);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [recaptchaSiteKey]);
+
   const businessName = siteSettings?.businessName ?? 'MB Expert LLC';
   const tagline = siteSettings?.tagline ?? 'Mobile Mechanic and Locksmith';
   const phone = siteSettings?.phone ?? '231-392-6204';
+  const phoneHref = `tel:${phone.replace(/[^0-9+]/g, '')}`;
   const email = siteSettings?.email ?? 'mbexpertllc@gmail.com';
   const address = siteSettings?.address ?? 'Traverse City, MI 49686';
   const serviceArea = siteSettings?.serviceArea ?? 'Serving Northern Michigan';
@@ -210,10 +291,21 @@ export default function HomePage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (recaptchaSiteKey && !recaptchaToken) {
+      setFormStatus('error');
+      setFormMessage('Please complete the anti-spam check before sending.');
+      return;
+    }
+
     setFormStatus('sending');
     setFormMessage('');
 
     const payload = Object.fromEntries(new FormData(e.currentTarget).entries());
+    const submission = {
+      ...payload,
+      recaptchaToken,
+    };
 
     try {
       const response = await fetch('/api/contact', {
@@ -221,7 +313,7 @@ export default function HomePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(submission),
       });
 
       const result = (await response.json().catch(() => null)) as { error?: string } | null;
@@ -241,6 +333,10 @@ export default function HomePage() {
       });
       setFormStatus('success');
       setFormMessage('Request sent. MB Expert LLC will reply by email soon.');
+      setRecaptchaToken('');
+      if (window.grecaptcha && recaptchaWidgetIdRef.current !== null) {
+        window.grecaptcha.reset(recaptchaWidgetIdRef.current);
+      }
     } catch (error) {
       setFormStatus('error');
       setFormMessage(error instanceof Error ? error.message : 'Could not send the request right now.');
@@ -258,7 +354,7 @@ export default function HomePage() {
           <div className="section-inner site-header__inner">
             <button onClick={() => scrollToSection('hero')} className="brand-button" type="button">
               <span className="brand-logo-shell">
-                <img src={siteSettings?.logo?.url ?? '/assets/mb-expert-logo.png'} alt="MB Expert LLC logo" className="brand-logo" />
+                <img src={siteSettings?.logo?.url ?? '/assets/mb-expert-logo.webp'} alt="MB Expert LLC logo" className="brand-logo" />
               </span>
               <span className="brand-copy">
                 <span className="brand-title">{businessName}</span>
@@ -275,10 +371,11 @@ export default function HomePage() {
             </nav>
 
             <div className="site-header__actions">
-              <button type="button" className="button-primary button-primary--header" onClick={() => scrollToSection('contact')}>
+              <a href={phoneHref} className="button-primary button-primary--header">
                 <Phone className="icon-sm" />
-                {primaryCtaLabel}
-              </button>
+                <span className="button-primary__label button-primary__label--mobile">Call</span>
+                <span className="button-primary__label button-primary__label--desktop">{primaryCtaLabel}</span>
+              </a>
               <button
                 type="button"
                 className="site-menu-toggle"
@@ -522,6 +619,12 @@ export default function HomePage() {
                     />
                   </label>
 
+                  {recaptchaSiteKey ? (
+                    <div className="contact-form__captcha">
+                      <div ref={recaptchaContainerRef} />
+                    </div>
+                  ) : null}
+
                   <button type="submit" className="button-primary button-primary--wide" disabled={formStatus === 'sending'}>
                     <Send className="icon-sm" /> {formStatus === 'sending' ? 'Sending...' : 'Send request'}
                   </button>
@@ -541,7 +644,7 @@ export default function HomePage() {
           <div className="section-inner site-footer__inner">
             <div>
               <div className="footer-brand">
-                <img src={siteSettings?.logo?.url ?? '/assets/mb-expert-logo.png'} alt="MB Expert LLC logo" />
+                <img src={siteSettings?.logo?.url ?? '/assets/mb-expert-logo.webp'} alt="MB Expert LLC logo" />
                 <div>
                   <div className="footer-brand__title">{businessName}</div>
                   <div className="footer-brand__subtitle">{tagline}</div>

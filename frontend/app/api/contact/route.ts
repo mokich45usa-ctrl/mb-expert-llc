@@ -9,6 +9,7 @@ type ContactPayload = {
   email?: string;
   message?: string;
   website?: string;
+  recaptchaToken?: string;
 };
 
 function escapeHtml(value: string) {
@@ -39,9 +40,39 @@ export async function POST(req: Request) {
     const phone = normalize(body.phone);
     const email = normalize(body.email);
     const message = normalize(body.message);
+    const recaptchaToken = normalize(body.recaptchaToken);
 
     if (!zipCode || !year || !make || !model || !phone || !email || !message) {
       return Response.json({ error: 'Please fill in all required fields.' }, { status: 400 });
+    }
+
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    if (recaptchaSecret) {
+      if (!recaptchaToken) {
+        return Response.json(
+          { error: 'Please complete the anti-spam check before sending.' },
+          { status: 400 }
+        );
+      }
+
+      const verificationResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          secret: recaptchaSecret,
+          response: recaptchaToken,
+        }),
+      });
+
+      const verification = (await verificationResponse.json()) as { success?: boolean };
+      if (!verification.success) {
+        return Response.json(
+          { error: 'Anti-spam verification failed. Please try again.' },
+          { status: 400 }
+        );
+      }
     }
 
     const smtpHost = process.env.SMTP_HOST;

@@ -193,7 +193,7 @@ function Header({
         <div className="section-inner site-header__inner">
           <button onClick={goHome} className="brand-button" type="button">
             <span className="brand-logo-shell">
-              <img src="/assets/mb-expert-logo.png" alt="MB Expert LLC logo" className="brand-logo" />
+              <img src="/assets/mb-expert-logo.webp" alt="MB Expert LLC logo" className="brand-logo" />
             </span>
             <span className="brand-copy">
               <span className="brand-title">{businessName}</span>
