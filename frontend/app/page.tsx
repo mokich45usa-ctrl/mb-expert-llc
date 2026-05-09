@@ -33,6 +33,7 @@ declare global {
           'error-callback'?: () => void;
         }
       ) => number;
+      ready: (callback: () => void) => void;
       reset: (widgetId?: number) => void;
     };
   }
@@ -186,8 +187,25 @@ export default function HomePage() {
       });
     };
 
-    if (window.grecaptcha?.render) {
+    const queueRender = () => {
+      if (cancelled || !window.grecaptcha || !recaptchaContainerRef.current) {
+        return;
+      }
+
+      if (typeof window.grecaptcha.ready === 'function') {
+        window.grecaptcha.ready(() => {
+          if (!cancelled) {
+            renderWidget();
+          }
+        });
+        return;
+      }
+
       renderWidget();
+    };
+
+    if (window.grecaptcha?.render) {
+      queueRender();
       return () => {
         cancelled = true;
       };
@@ -195,7 +213,7 @@ export default function HomePage() {
 
     const existingScript = document.querySelector<HTMLScriptElement>('script[data-recaptcha="true"]');
     if (existingScript) {
-      existingScript.addEventListener('load', renderWidget, { once: true });
+      existingScript.addEventListener('load', queueRender, { once: true });
       return () => {
         cancelled = true;
       };
@@ -206,7 +224,7 @@ export default function HomePage() {
     script.async = true;
     script.defer = true;
     script.dataset.recaptcha = 'true';
-    script.onload = renderWidget;
+    script.onload = queueRender;
     document.head.appendChild(script);
 
     return () => {

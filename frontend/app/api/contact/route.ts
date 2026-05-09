@@ -12,6 +12,15 @@ type ContactPayload = {
   recaptchaToken?: string;
 };
 
+type RateLimitState = {
+  count: number;
+  resetAt: number;
+};
+
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_SUBMISSIONS_PER_WINDOW = 5;
+const rateLimitStore = new Map<string, RateLimitState>();
+
 function escapeHtml(value: string) {
   return value
     .replaceAll('&', '&amp;')
@@ -25,8 +34,105 @@ function normalize(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function getAllowedOrigins() {
+  const configuredOrigins = process.env.CONTACT_ALLOWED_ORIGINS;
+  if (configuredOrigins) {
+    return configuredOrigins
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mbexpertllc.com';
+
+  try {
+    const parsed = new URL(siteUrl);
+    const origins = new Set<string>([parsed.origin]);
+
+    if (parsed.hostname === 'mbexpertllc.com') {
+      origins.add(`${parsed.protocol}//www.${parsed.hostname}`);
+    }
+
+    if (parsed.hostname.startsWith('www.')) {
+      origins.add(`${parsed.protocol}//${parsed.hostname.slice(4)}`);
+    }
+
+    return [...origins];
+  } catch {
+    return ['https://mbexpertllc.com', 'https://www.mbexpertllc.com'];
+  }
+}
+
+function getRequestOrigin(req: Request) {
+  const origin = req.headers.get('origin');
+  if (origin) {
+    return origin;
+  }
+
+  const referer = req.headers.get('referer');
+  if (!referer) {
+    return '';
+  }
+
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return '';
+  }
+}
+
+function isAllowedRequest(req: Request) {
+  const requestOrigin = getRequestOrigin(req);
+  const allowedOrigins = getAllowedOrigins();
+  return requestOrigin ? allowedOrigins.includes(requestOrigin) : false;
+}
+
+function getClientIp(req: Request) {
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0]?.trim() ?? '';
+  }
+
+  return (
+    req.headers.get('x-real-ip') ??
+    req.headers.get('cf-connecting-ip') ??
+    req.headers.get('true-client-ip') ??
+    ''
+  );
+}
+
+function isRateLimited(key: string) {
+  const now = Date.now();
+  const current = rateLimitStore.get(key);
+
+  if (!current || current.resetAt <= now) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+
+  current.count += 1;
+  rateLimitStore.set(key, current);
+  return current.count > MAX_SUBMISSIONS_PER_WINDOW;
+}
+
 export async function POST(req: Request) {
   try {
+    if (!isAllowedRequest(req)) {
+      return Response.json({ error: 'Invalid request origin.' }, { status: 403 });
+    }
+
+    const rateLimitKey = getClientIp(req) || req.headers.get('user-agent') || 'anonymous';
+    if (isRateLimited(rateLimitKey)) {
+      return Response.json(
+        { error: 'Too many requests. Please try again in a few minutes.' },
+        { status: 429 }
+      );
+    }
+
     const body = (await req.json()) as ContactPayload;
 
     if (normalize(body.website)) {
@@ -44,6 +150,22 @@ export async function POST(req: Request) {
 
     if (!zipCode || !year || !make || !model || !phone || !email || !message) {
       return Response.json({ error: 'Please fill in all required fields.' }, { status: 400 });
+    }
+
+    if (
+      zipCode.length > 20 ||
+      year.length > 10 ||
+      make.length > 80 ||
+      model.length > 80 ||
+      phone.length > 40 ||
+      email.length > 254 ||
+      message.length > 4000
+    ) {
+      return Response.json({ error: 'Please shorten the form details and try again.' }, { status: 400 });
+    }
+
+    if (!isValidEmail(email)) {
+      return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
@@ -141,9 +263,10 @@ export async function POST(req: Request) {
 
     return Response.json({ ok: true });
   } catch (error) {
+    console.error('Contact form submission failed:', error);
     return Response.json(
       {
-        error: error instanceof Error ? error.message : 'Could not send the request.',
+        error: 'Could not send the request right now. Please try again later.',
       },
       { status: 500 }
     );
