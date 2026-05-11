@@ -299,6 +299,10 @@ export default function HomePage() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+
       const offset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
@@ -306,6 +310,8 @@ export default function HomePage() {
       setMenuOpen(false);
     }
   };
+
+  const scrollToContactForm = () => scrollToSection('contact-form');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -431,7 +437,7 @@ export default function HomePage() {
               <h1>{heroTitle}</h1>
               <p>{heroSubtitle}</p>
               <div className="hero-actions">
-                <button type="button" className="button-primary" onClick={() => scrollToSection('contact')}>
+                <button type="button" className="button-primary" onClick={scrollToContactForm}>
                   {primaryCtaLabel} <ArrowRight className="icon-sm" />
                 </button>
                 <button type="button" className="button-secondary button-secondary--hero" onClick={() => scrollToSection('services')}>
@@ -450,7 +456,7 @@ export default function HomePage() {
               <div className="section-kicker">{aboutEyebrow}</div>
               <h2>{aboutTitle}</h2>
               <p>{aboutBody}</p>
-              <button type="button" className="button-primary" onClick={() => scrollToSection('contact')}>
+              <button type="button" className="button-primary" onClick={scrollToContactForm}>
                 {aboutCtaLabel} <ArrowRight className="icon-sm" />
               </button>
             </div>
@@ -523,7 +529,7 @@ export default function HomePage() {
                     <h3>{step.title}</h3>
                     <p>{step.description}</p>
                     {step.number === '03' ? (
-                      <button type="button" className="button-accent" onClick={() => scrollToSection('contact')}>
+                      <button type="button" className="button-accent" onClick={scrollToContactForm}>
                         Request Service <ArrowRight className="icon-sm" />
                       </button>
                     ) : null}
@@ -589,7 +595,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="contact-form-card">
+              <div className="contact-form-card" id="contact-form">
                 <h3>Request service</h3>
                 <form onSubmit={handleSubmit} className="contact-form">
                   <input
